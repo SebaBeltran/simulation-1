@@ -5,46 +5,19 @@ import Form from "./components/Form/Form";
 import Header from "./components/Header/Header";
 import Product from "./components/Product/Product";
 import axios from "axios";
+import {Route, Switch} from "react-router-dom";
 
-class App extends Component {
-  constructor(){
-    super();
-    
-    this.state = {
-      products: []
-    }
-    this.getProducts = this.getProducts.bind(this);
-    this.deleteProduct = this.deleteProduct.bind(this);
-  }
-
-  componentDidMount(){
-    this.getProducts()
-  }
-
-  getProducts(){
-    axios.get("/api/products").then(res =>{
-      this.setState({products: res.data})
-    })
-  }
-
-  deleteProduct(id){
-    console.log(id)
-    axios.delete(`/api/products/${id}`).then(res => {
-      this.getProducts();
-    })
-  }
-
-  render() {
-    console.log(this.state.products)
+export default function() {
     return (
-      <div className="App">
-        <Dashboard list={this.state.products} delete={this.deleteProduct}/>
-        <Form update={this.getProducts} />
-        {/* <Header />
-        <Product /> */}
+      <div>
+        <Header />
+        <div  className="App">
+        <Switch>
+          <Route component={Dashboard} path="/" exact />
+          <Route component={Form} path="/add"/>
+          <Route component={Form} path="/add/:id"/>
+        </Switch>
+        </div>
       </div>
     );
   }
-}
-
-export default App;

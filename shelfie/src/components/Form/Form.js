@@ -3,19 +3,22 @@ import "./Form.css"
 import axios from "axios";
 
 export default class Form extends Component{
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
 
     this.state = {
       preview: "http://experienceidyllwild.com/images/no-image-available2.jpg",
       url: "",
       name: "",
-      price: ""
+      price: "",
+      current: null
     }
     this.addProduct = this.addProduct.bind(this);
     this.resetState = this.resetState.bind(this);
     this.verifyImg = this.verifyImg.bind(this);
+    this.editProduct = this.editProduct.bind(this);
   }
+  
 
   verifyImg(){
     !this.state.url 
@@ -32,7 +35,7 @@ export default class Form extends Component{
       itemImg: this.state.url
     }
     axios.post("/api/products", body).then(res =>{
-      this.props.update();
+      this.props.history.push('/')
     });
     this.resetState();
   }
@@ -41,7 +44,20 @@ export default class Form extends Component{
     this.setState({url: "", name: "", price: ""})
   }
 
+  editProduct(){
+    let body = {
+      itemName: this.state.name,
+      itemPrice: this.state.price,
+      itemImg: this.state.url
+    }
+
+    axios.put(`/api/products/${this.props.match.params.id}`, body).then(res =>{
+      this.props.history.push('/')
+    });
+  }
+
   render(){
+    console.log(this.props.match)
     return(
       <div className="form">
         <img className="preview" src ={this.state.preview} />
@@ -53,6 +69,7 @@ export default class Form extends Component{
         <input value = {this.state.price} onChange={(e) => this.setState({price: e.target.value})}placeholder="Add price"/>
         <button className="btn" onClick={() => this.resetState()}>Cancel</button>
         <button className="btn" onClick={() => this.verifyImg()}>Add to inventory</button>
+        <button className="btn" onClick={() => this.editProduct()}>Edit</button>
       </div>
     )
   }
